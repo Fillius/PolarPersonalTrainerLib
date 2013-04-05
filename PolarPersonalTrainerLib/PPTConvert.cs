@@ -7,16 +7,29 @@ using System.Threading.Tasks;
 
 namespace PolarPersonalTrainerLib
 {
+    public struct PPTColumns
+    {
+        public const string Time = "Time";
+        public const string Sport = "Sport";
+        public const string Calories = "Calories";
+        public const string Duration = "Duration";
+        public const string RestingHR = "Resting HR";
+        public const string AverageHR = "Average HR";
+        public const string MaximumHR = "Maximum HR";
+        public const string VO2Max = "VO2 Max";
+    }
+
     public class PPTConvert
     {
-        private static String[] columns = { "Time",
-                             "Sport",
-                             "Calories",
-                             "Duration",
-                             "Resting HR",
-                             "Average HR",
-                             "Maximum HR",
-                             "VO2 Max" };
+        static String[] columnNames =
+                { PPTColumns.Time,
+                  PPTColumns.Sport,
+                  PPTColumns.Calories,
+                  PPTColumns.Duration,
+                  PPTColumns.RestingHR,
+                  PPTColumns.AverageHR,
+                  PPTColumns.MaximumHR,
+                  PPTColumns.VO2Max };
 
         public static DataRow convertExerciseToDataRow(PPTExercise exercise, DataTable dt)
         {
@@ -24,19 +37,19 @@ namespace PolarPersonalTrainerLib
 
             DataRow dr = dt.NewRow();
 
-            dr["Time"] = exercise.time;
-            dr["Sport"] = exercise.sport;
-            dr["Calories"] = exercise.calories;
-            dr["Duration"] = exercise.duration;
+            dr[PPTColumns.Time] = exercise.time;
+            dr[PPTColumns.Sport] = exercise.sport;
+            dr[PPTColumns.Calories] = exercise.calories;
+            dr[PPTColumns.Duration] = exercise.duration;
 
             HeartRate hr = exercise.heartRate;
 
             if (hr != null && hr.hasData())
             {
-                dr["Resting HR"] = exercise.heartRate.resting;
-                dr["Average HR"] = exercise.heartRate.average;
-                dr["Maximum HR"] = exercise.heartRate.maximum;
-                dr["VO2 Max"] = exercise.heartRate.vo2Max;
+                dr[PPTColumns.RestingHR] = exercise.heartRate.resting;
+                dr[PPTColumns.AverageHR] = exercise.heartRate.average;
+                dr[PPTColumns.MaximumHR] = exercise.heartRate.maximum;
+                dr[PPTColumns.VO2Max] = exercise.heartRate.vo2Max;
             }
 
             return dr;
@@ -44,10 +57,10 @@ namespace PolarPersonalTrainerLib
 
         private static void addMissingColumns(ref DataTable dt)
         {
-            foreach (String column in columns)
+            foreach (String columnName in columnNames)
             {
-                if (!dt.Columns.Contains(column))
-                    dt.Columns.Add(column);
+                if (!dt.Columns.Contains(columnName))
+                    dt.Columns.Add(columnName);
             }
         }
     }
