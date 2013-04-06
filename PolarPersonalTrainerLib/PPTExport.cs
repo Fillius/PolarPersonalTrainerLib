@@ -63,7 +63,7 @@ namespace PolarPersonalTrainerLib
             using (var response = (HttpWebResponse)request.GetResponse())
             {
                 if (response == null)
-                    throw new InvalidOperationException(String.Format("POST request to {1} did not get a reponse", url));
+                    throw new PPTException(String.Format("POST request to {1} did not get a reponse", url));
 
                 using (var reader = new StreamReader(response.GetResponseStream()))
                     return reader.ReadToEnd();
@@ -77,7 +77,7 @@ namespace PolarPersonalTrainerLib
             using (var response = (HttpWebResponse)request.GetResponse())
             {
                 if (response == null)
-                    throw new InvalidOperationException(String.Format("GET request from {1} did not get a reponse", url));
+                    throw new PPTException(String.Format("GET request from {1} did not get a reponse", url));
 
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
@@ -143,30 +143,35 @@ namespace PolarPersonalTrainerLib
             var url = "https://www.polarpersonaltrainer.com/index.ftl";
             var strPost = "email=" + username + "&password=" + password + "&.action=login&tz=0";
 
-            postRequest(url, strPost);
+            var responseStr = postRequest(url, strPost);
+
+            if (responseStr == null || responseStr.Length == 0)
+                throw new PPTException("Failed to login to PolarPersonalTrainer.com");
+
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(responseStr);
+
+            if (doc.GetElementbyId("ico-logout") == null)
+                throw new PPTException("Unable to login to PolarPersonalTrainer.com using the provided credentials");
 
             url = "https://www.polarpersonaltrainer.com/user/calendar/inc/listview.ftl?" +
                 "startDate=" + startDate.ToShortDateString() + "&endDate=" + endDate.ToShortDateString();
 
             // Attempt to get the list of training sessions for the requested dates
-            HtmlDocument doc = new HtmlDocument();
+            doc = new HtmlDocument();
             doc.LoadHtml(getRequest(url));
 
             var calItems = doc.GetElementbyId("calItems");
 
             if (calItems == null)
-            {
-                throw new InvalidDataException("Could not find the HTML table 'calItems' containing training results");
-            }
+                throw new PPTException("No diary items found in the selected timeframe");
             
             url = "https://www.polarpersonaltrainer.com/user/calendar/index.jxml";
 
             strPost = getTrainingSessions(calItems);
 
             if (strPost == null)
-            {
-                throw new InvalidDataException("No training sessions found");
-            }
+                throw new PPTException("No complete training sessions found");
 
             // Attempt to export the XML file for the excercises found above
             xml = new XmlDocument();

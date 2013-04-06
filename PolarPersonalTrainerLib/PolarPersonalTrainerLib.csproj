@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PPTConvert.cs" />
+    <Compile Include="PPTException.cs" />
     <Compile Include="PPTExercise.cs" />
     <Compile Include="PPTExtract.cs" />
     <Compile Include="PPTExport.cs" />
