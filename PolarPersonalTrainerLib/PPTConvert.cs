@@ -55,6 +55,25 @@ namespace PolarPersonalTrainerLib
             return dr;
         }
 
+        public static PPTExercise convertDataRowToExercise(DataRow dr)
+        {
+            PPTExercise exercise = new PPTExercise();
+
+            exercise.time = Convert.ToDateTime(dr[PPTColumns.Time]);
+            exercise.sport = dr[PPTColumns.Sport].ToString();
+            exercise.calories = Convert.ToInt32(dr[PPTColumns.Calories]);
+            exercise.duration = TimeSpan.Parse(dr[PPTColumns.Duration].ToString());
+
+            HeartRate hr = new HeartRate();
+
+            hr.resting = Convert.ToInt32(dr[PPTColumns.RestingHR]);
+            hr.average = Convert.ToInt32(dr[PPTColumns.AverageHR]);
+            hr.maximum = Convert.ToInt32(dr[PPTColumns.MaximumHR]);
+            hr.vo2Max = Convert.ToInt32(dr[PPTColumns.VO2Max]);
+
+            return exercise;
+        }
+
         private static void addMissingColumns(ref DataTable dt)
         {
             foreach (String columnName in columnNames)
