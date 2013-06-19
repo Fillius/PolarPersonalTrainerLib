@@ -10,7 +10,7 @@ namespace PolarPersonalTrainerLib
 {
     public class PPTExtract
     {
-        public static List<PPTExercise> convertXmlToExercises(XmlDocument xml)
+        public static List<PPTExercise> convertXmlToExercises(XmlDocument xml, bool requireSport = false)
         {
             XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xml.NameTable);
             XmlNodeList xmlNodes = xml.GetElementsByTagName("exercise");
@@ -28,8 +28,13 @@ namespace PolarPersonalTrainerLib
                 XmlNode sportNode = exerciseNode["sport"];
                 XmlElement resultNode = (XmlElement)exerciseNode["result"];
 
-                if (timeNode == null || sportNode == null || resultNode == null)
+                if (timeNode == null  || resultNode == null)
                     continue;
+
+                if (requireSport && sportNode == null)
+                    continue;
+                else
+                    exercise.sport = sportNode.InnerText;
 
                 XmlNode caloriesNode = resultNode["calories"];
                 XmlNode durationNode = resultNode["duration"];
@@ -42,7 +47,6 @@ namespace PolarPersonalTrainerLib
                     continue;
 
                 exercise.time = DateTime.Parse(timeNode.InnerText);
-                exercise.sport = sportNode.InnerText;
                 exercise.calories = Convert.ToInt32(caloriesNode.InnerText);
                 exercise.duration = TimeSpan.Parse(durationNode.InnerText);
 
