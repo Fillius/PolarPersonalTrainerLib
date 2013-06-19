@@ -33,8 +33,9 @@ namespace PolarPersonalTrainerLib
 
                 if (requireSport && sportNode == null)
                     continue;
-                else
-                    exercise.sport = sportNode.InnerText;
+
+                if (sportNode == null && requireSport)
+                    continue;
 
                 XmlNode caloriesNode = resultNode["calories"];
                 XmlNode durationNode = resultNode["duration"];
@@ -49,6 +50,9 @@ namespace PolarPersonalTrainerLib
                 exercise.time = DateTime.Parse(timeNode.InnerText);
                 exercise.calories = Convert.ToInt32(caloriesNode.InnerText);
                 exercise.duration = TimeSpan.Parse(durationNode.InnerText);
+                
+                if (sportNode != null)
+                    exercise.sport = sportNode.InnerText;
 
                 HeartRate hr = new HeartRate();
 
