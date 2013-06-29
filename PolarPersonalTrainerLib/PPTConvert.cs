@@ -64,12 +64,12 @@ namespace PolarPersonalTrainerLib
             exercise.calories = Convert.ToInt32(dr[PPTColumns.Calories]);
             exercise.duration = TimeSpan.Parse(dr[PPTColumns.Duration].ToString());
 
-            HeartRate hr = new HeartRate();
+            exercise.heartRate = new HeartRate();
 
-            hr.resting = Convert.ToInt32(dr[PPTColumns.RestingHR]);
-            hr.average = Convert.ToInt32(dr[PPTColumns.AverageHR]);
-            hr.maximum = Convert.ToInt32(dr[PPTColumns.MaximumHR]);
-            hr.vo2Max = Convert.ToInt32(dr[PPTColumns.VO2Max]);
+            exercise.heartRate.resting = Convert.ToInt32(dr[PPTColumns.RestingHR]);
+            exercise.heartRate.average = Convert.ToInt32(dr[PPTColumns.AverageHR]);
+            exercise.heartRate.maximum = Convert.ToInt32(dr[PPTColumns.MaximumHR]);
+            exercise.heartRate.vo2Max = Convert.ToInt32(dr[PPTColumns.VO2Max]);
 
             return exercise;
         }
