@@ -10,12 +10,12 @@ namespace PolarPersonalTrainerLib
     public struct PPTColumns
     {
         public const string Time = "Time";
-        public const string Sport = "Sport";
-        public const string Calories = "Calories";
         public const string Duration = "Duration";
-        public const string RestingHR = "Resting HR";
+        public const string Calories = "Calories";
+        public const string Sport = "Sport";
         public const string AverageHR = "Average HR";
         public const string MaximumHR = "Maximum HR";
+        public const string RestingHR = "Resting HR";
         public const string VO2Max = "VO2 Max";
     }
 
@@ -23,12 +23,12 @@ namespace PolarPersonalTrainerLib
     {
         static String[] columnNames =
                 { PPTColumns.Time,
-                  PPTColumns.Sport,
-                  PPTColumns.Calories,
                   PPTColumns.Duration,
-                  PPTColumns.RestingHR,
+                  PPTColumns.Calories,
+                  PPTColumns.Sport,
                   PPTColumns.AverageHR,
                   PPTColumns.MaximumHR,
+                  PPTColumns.RestingHR,
                   PPTColumns.VO2Max };
 
         public static DataRow convertExerciseToDataRow(PPTExercise exercise, DataTable dt)
@@ -74,13 +74,22 @@ namespace PolarPersonalTrainerLib
             return exercise;
         }
 
+        private static void addTypedColumn(ref DataTable dt, String columnName, Type columnType)
+        {
+            if (!dt.Columns.Contains(columnName))
+                dt.Columns.Add(columnName, columnType);
+        }
+
         private static void addMissingColumns(ref DataTable dt)
         {
-            foreach (String columnName in columnNames)
-            {
-                if (!dt.Columns.Contains(columnName))
-                    dt.Columns.Add(columnName);
-            }
+            addTypedColumn(ref dt, PPTColumns.Time, typeof(DateTime));
+            addTypedColumn(ref dt, PPTColumns.Duration, typeof(TimeSpan));
+            addTypedColumn(ref dt, PPTColumns.Calories, typeof(int));
+            addTypedColumn(ref dt, PPTColumns.Sport, typeof(string));
+            addTypedColumn(ref dt, PPTColumns.AverageHR, typeof(int));
+            addTypedColumn(ref dt, PPTColumns.MaximumHR, typeof(int));
+            addTypedColumn(ref dt, PPTColumns.RestingHR, typeof(int));
+            addTypedColumn(ref dt, PPTColumns.VO2Max, typeof(int));
         }
     }
 }
