@@ -155,7 +155,7 @@ namespace PolarPersonalTrainerLib
                 throw new PPTException("Unable to login to PolarPersonalTrainer.com using the provided credentials");
 
             url = "https://www.polarpersonaltrainer.com/user/calendar/inc/listview.ftl?" +
-                "startDate=" + startDate.ToShortDateString() + "&endDate=" + endDate.ToShortDateString();
+                "startDate=" + startDate.ToString("dd.MM.yyyy") + "&endDate=" + endDate.ToString("dd.MM.yyyy");
 
             // Attempt to get the list of training sessions for the requested dates
             doc = new HtmlDocument();
