@@ -13,6 +13,8 @@ namespace PolarPersonalTrainerLib
         public static List<PPTExercise> convertXmlToExercises(XmlDocument xml, bool requireSport = false)
         {
             XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xml.NameTable);
+            // Need a prefix for the default namespace so it can be used in Xpath queries later on
+            namespaceManager.AddNamespace("x", "http://www.polarpersonaltrainer.com");
             XmlNodeList xmlNodes = xml.GetElementsByTagName("exercise");
             
             if (xmlNodes == null)
@@ -50,11 +52,26 @@ namespace PolarPersonalTrainerLib
                 exercise.time = DateTime.Parse(timeNode.InnerText);
                 exercise.calories = Convert.ToInt32(caloriesNode.InnerText);
                 exercise.duration = TimeSpan.Parse(durationNode.InnerText);
+                // Added support for distance and name
+                exercise.Distance = double.Parse(resultNode["distance"].Value ?? "0");
+                exercise.Name = exerciseNode["name"].Value ?? string.Empty;
+                // If there exist a running-index gps data has to exist
+                exercise.HasGPSData = resultNode["running-index"] != null;
                 
                 if (sportNode != null)
                     exercise.sport = sportNode.InnerText;
 
                 HeartRate hr = new HeartRate();
+
+                // Added support for heart beats
+                try
+                {
+          
+                    int recordRate = int.Parse(resultNode["recording-rate"].InnerText);
+                    var heartbeats = resultNode.SelectSingleNode("//x:sample[x:type/text() = 'HEARTRATE']/x:values", namespaceManager).InnerText.Split(new char[] { ',' });
+                    hr.HeartBeats = heartbeats.Select((v, i) => new HeartBeat() { HeartRate = int.Parse(v), Time = exercise.time.AddSeconds(i * recordRate) }).ToList();
+                }
+                catch { }
 
                 if (hrNode != null)
                 {
